@@ -2,6 +2,8 @@
 
 MMORPG médiéval dark fantasy sur Roblox, vue plongeante. Hub : **Aldrenord**.
 
+Version actuelle : voir le fichier `VERSION` (chaque mise à jour augmente le dernier chiffre).
+
 Ce dépôt sert à partager la place Roblox (`.rbxl`) et à suivre ce qui change d'une version à l'autre.
 Le `.rbxl` est un fichier binaire : GitHub ne peut pas montrer ses différences. **Le journal ci-dessous est la référence.**
 
