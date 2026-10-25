@@ -9,7 +9,7 @@ Le `.rbxl` est un fichier binaire : GitHub ne peut pas montrer ses différences.
 
 ## Ouvrir le projet
 
-1. Télécharger le `.rbxl` le plus récent (actuellement `From abv 1.0.4.rbxl`).
+1. Télécharger le `.rbxl` le plus récent (actuellement `From abv 1.0.5.rbxl`).
 2. L'ouvrir dans Roblox Studio (Fichier → Ouvrir).
 3. Avant de renvoyer une version : **Ctrl+S**, puis remplacer le fichier dans le dépôt et ajouter une entrée au journal.
 
@@ -48,6 +48,16 @@ Le `.rbxl` est un fichier binaire : GitHub ne peut pas montrer ses différences.
 Les versions précédentes des scripts sont gardées dans `ServerStorage.Sauvegardes` (un dossier par étape).
 
 ## Journal des changements
+
+### 1.0.5 — 2026-10-25 — Franges et longueurs des coupes
+
+- **Franges** ajoutées aux coupes 2 à 9 pour moins montrer le front : mèches en désordre (2, 4, 8), mèche retombant sur le côté (3), rideau avec raie au milieu (5), frange balayée (6, 7), frange posée sur le front (9). Les mèches ne descendent jamais sur les sourcils.
+- **Longueurs raccourcies** : coupe 5 (longs détachés) 1,69 stud de haut au lieu de 2,25 ; coupe 6 (queue-de-cheval) 1,44 au lieu de 1,75 ; coupe 8 (tressés) 1,69 au lieu de 2,38. Les cheveux tombent maintenant sur le haut du dos.
+- Coupes 1 et 10 inchangées. Même texture qu'avant : les couleurs du menu F2 s'appliquent toujours aux 10 coupes. La coupe 9 garde `Transparency = 0.01` (zone rasée semi-transparente).
+- Modèles remplacés dans `ReplicatedStorage > Cheveux` (`Coupe2` à `Coupe9`, nouveaux attributs `Decalage`) et sur les PNJ (Mannequin coupe 9, Combattant coupe 6). Aucun script modifié.
+- Un fichier « Front Fix » fourni à part n'a pas été utilisé : ses faces pointaient vers les mauvais sommets (coupes 6 à 9 mélangées entre elles) et il reprenait les anciennes longueurs. Les franges ont été refaites dans le générateur des coupes.
+- Testé en jeu : coupes 5 et 9 avec frange posées depuis le menu F2 (position sur la tête correcte, frange au-dessus des sourcils, zone rasée transparente) ; coupes 5, 6 et 8 raccourcies posées et vues de dos avant l'ajout des franges ; coupes des deux PNJ remplacées.
+- Non testé : coupes 2, 3, 4, 6, 7 et 8 avec frange sur le personnage en jeu (vues seulement en aperçu), vue par un deuxième joueur, manette, tactile.
 
 ### 1.0.4 — 2026-10-25 — Coupes de cheveux
 
