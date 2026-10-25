@@ -20,7 +20,8 @@ Ce dépôt partage la place Roblox de **D'EN HAUT** entre Desno972 et Arika00.
    - les scripts modifiés ;
    - ce qui a été testé en jeu et ce qui ne l'a pas été (ne jamais dire « testé » pour du code seulement relu).
 6. **Commit et push** sur `main` : message `Version <version> : <titre>`, un seul commit par version.
-7. Donner à l'utilisateur le numéro publié et le lien du dépôt.
+7. **Release** : le push déclenche l'action `.github/workflows/release.yml`, qui crée la release `v<version>` avec le `.rbxl`, le README et l'entrée du journal comme notes (la session Claude ne peut pas créer de release elle-même). Vérifier qu'elle est apparue (`gh run list` / `gh release view v<version>`) ; si l'action a échoué, lire son journal et corriger.
+8. Donner à l'utilisateur le numéro publié et le lien de la release.
 
 ## À ne pas faire
 

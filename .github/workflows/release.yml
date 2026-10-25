@@ -1,0 +1,70 @@
+# Crée automatiquement une release GitHub à chaque nouvelle version (fichier VERSION modifié).
+# La release contient la place .rbxl, le README et, comme notes, l'entrée du journal de cette version.
+name: Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - VERSION
+      - "*.rbxl"
+      - README.md
+      - .github/workflows/release.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Lire la version
+        id: v
+        run: |
+          VERSION="$(tr -d '[:space:]' < VERSION)"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Release déjà publiée ?
+        id: exists
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "${{ steps.v.outputs.tag }}" >/dev/null 2>&1; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Préparer les notes
+        if: steps.exists.outputs.skip == 'false'
+        id: notes
+        run: |
+          V="${{ steps.v.outputs.version }}"
+          RBXL="From abv $V.rbxl"
+          test -f "$RBXL" || { echo "::error::$RBXL introuvable"; exit 1; }
+          # titre = ligne « ### <version> — <date> — <titre> » du journal
+          TITLE="$(grep -m1 "^### $V " README.md | sed -E 's/^### [^—]+— [^—]+— //')"
+          {
+            echo "Place Roblox de **D'EN HAUT**, version $V. Télécharger \`$RBXL\` ci-dessous et l'ouvrir dans Roblox Studio (Fichier → Ouvrir)."
+            echo
+            # entrée du journal de cette version (jusqu'à l'entrée de la version précédente)
+            awk -v v="$V" '$0 ~ "^### "v" " {f=1; print; next} f && /^### [0-9]+\.[0-9]+\.[0-9]+ / {exit} f && /^### Avant le/ {exit} f' README.md
+          } > notes.md
+          echo "title=Version $V${TITLE:+ — $TITLE}" >> "$GITHUB_OUTPUT"
+          echo "rbxl=$RBXL" >> "$GITHUB_OUTPUT"
+
+      - name: Publier la release
+        if: steps.exists.outputs.skip == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.v.outputs.tag }}" \
+            --target "${{ github.sha }}" \
+            --title "${{ steps.notes.outputs.title }}" \
+            --notes-file notes.md \
+            "${{ steps.notes.outputs.rbxl }}#${{ steps.notes.outputs.rbxl }} (place Roblox)" \
+            "README.md#README.md (journal complet)"
