@@ -9,7 +9,7 @@ Le `.rbxl` est un fichier binaire : GitHub ne peut pas montrer ses différences.
 
 ## Ouvrir le projet
 
-1. Télécharger le `.rbxl` le plus récent (actuellement `From abv 1.0.5.rbxl`).
+1. Télécharger le `.rbxl` le plus récent (actuellement `From abv 1.0.6.rbxl`).
 2. L'ouvrir dans Roblox Studio (Fichier → Ouvrir).
 3. Avant de renvoyer une version : **Ctrl+S**, puis remplacer le fichier dans le dépôt et ajouter une entrée au journal.
 
@@ -18,8 +18,7 @@ Le `.rbxl` est un fichier binaire : GitHub ne peut pas montrer ses différences.
 | Touche | Action |
 | --- | --- |
 | ZQSD | se déplacer (touches physiques : WASD en QWERTY) |
-| Shift | courir |
-| V (maintenir) | sprinter |
+| Shift (maintenir) | courir, puis sprint progressif |
 | C | s'accroupir / se relever (glissade si lancé) |
 | Espace | sauter |
 | Ctrl gauche | roulade ; en garde + gauche/droite : pas de côté ; sans direction : pas en arrière |
@@ -48,6 +47,18 @@ Le `.rbxl` est un fichier binaire : GitHub ne peut pas montrer ses différences.
 Les versions précédentes des scripts sont gardées dans `ServerStorage.Sauvegardes` (un dossier par étape).
 
 ## Journal des changements
+
+### 1.0.6 — 2026-10-25 — Sauts, roulade et sprint progressif
+
+- **Saut sur place en 5 temps** : préparation (0,16 s : genoux et hanches fléchis, bassin 0,78 stud plus bas, pieds à plat, bras tirés en arrière avec un léger retard), poussée au sol (0,08 s : hanches, genoux et chevilles tendus jusqu'à la pointe des pieds, bras qui balancent vers le haut ; les pieds quittent le sol après l'extension, avant le personnage décollait encore accroupi), phase aérienne (jambes repliées, bras écartés au sommet), descente (jambes qui se déplient, pieds remis à plat), réception (genoux jusqu'à 86° au lieu de 48°, tronc droit, retour stable en ~0,25 s).
+- **Saut en courant en appel sur une jambe** : dernière foulée qui charge la jambe d'appel (bassin 0,31 stud plus bas, jambe libre derrière, bras opposé en arrière), poussée au sol (jambe d'appel tendue, genou libre qui monte, bras opposé vers le haut), foulée en l'air avec un écart des cuisses de 116° (au lieu d'environ 70°), réception en courant. La jambe d'appel alterne à chaque saut ; corrigé : les jambes s'inversaient au décollage.
+- **Roulade décomposée** en 6 phases enchaînées (élan, abaissement, contact en diagonale sur l'épaule droite menton rentré et tête décalée, rotation groupée, sortie accroupie, reprise de course) ; chaque partie du corps part avec son propre décalage (jambes, bassin, buste, tête, bras droit, bras gauche). 81 clés, hauteur du bassin calculée sur le rig. L'animation dure 0,74 s (le déplacement reste de 8,1 studs en 0,6 s).
+- **Sprint** : la touche V est supprimée. Shift maintenu : course en ~1 s (17), puis sprint qui s'installe en ~1,5 s jusqu'à 19,5 (au lieu de 21 avec V) ; buste plus penché, bassin un peu plus bas, bras plus fléchis. Dagues 19, épée 16,5.
+- **Genou au sol** : arrive 2,65 s après s'être accroupi (au lieu d'environ 7 s), descente en 0,9 s.
+- Scripts modifiés : `Locomotion` (poses et phases des deux sauts, côté de la jambe d'appel, sprint visible, réglages `JUMP_PREP` 0,24, `JUMP_PREP_RUN` 0,15, `KNEEL_IDLE` 2, `KNEEL_IN` 0,9, `SPRINT_LEAN` 12), `CombatAnims` (`roll_forward`), `CombatClient` (touche V retirée, sprint progressif sous Shift), `CombatData` (vitesses de sprint, `SPRINT_BUILD`).
+- Testé en jeu : saut sur place et saut en courant enregistrés image par image puis revus de profil, hauteur 3,95 et portée en sprint 8,4 inchangées, écart des cuisses 116° sur deux sauts (une jambe d'appel de chaque côté), roulade (8,1 studs en 0,6 s, corps jamais sous le sol à plus de 0,07 stud), V sans effet, montée de vitesse sous Shift (13 → 17 en 1 s → 19,5), genou au sol, console sans erreur.
+- Non testé : roulade observée à l'œil en jeu (vérifiée image par image hors jeu et mesurée en jeu), sauts avec une arme en main, vue par un deuxième joueur, manette, tactile.
+- Limites connues : à l'arrêt, le saut part 0,24 s après l'appui (0,15 s en courant), le temps de la préparation ; pendant la rotation de la roulade, le corps flotte d'environ 0,2 stud une ou deux images ; la roulade bloque les attaques environ 0,15 s de plus qu'avant.
 
 ### 1.0.5 — 2026-10-25 — Franges et longueurs des coupes
 
