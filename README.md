@@ -9,7 +9,7 @@ Le `.rbxl` est un fichier binaire : GitHub ne peut pas montrer ses différences.
 
 ## Ouvrir le projet
 
-1. Télécharger le `.rbxl` le plus récent (actuellement `From abv 1.0.3.rbxl`).
+1. Télécharger le `.rbxl` le plus récent (actuellement `From abv 1.0.4.rbxl`).
 2. L'ouvrir dans Roblox Studio (Fichier → Ouvrir).
 3. Avant de renvoyer une version : **Ctrl+S**, puis remplacer le fichier dans le dépôt et ajouter une entrée au journal.
 
@@ -27,6 +27,9 @@ Le `.rbxl` est un fichier binaire : GitHub ne peut pas montrer ses différences.
 | Clic droit | garde (parade si levée juste avant l'impact) |
 | X | sortir / ranger l'arme |
 | G | intimidation |
+| Tab | inventaire (clic : mettre en main ; clic droit : donner / jeter) |
+| F | ramasser un objet au sol |
+| F2 | menu admin (apparence, cheveux, armes) |
 
 ## Scripts principaux
 
@@ -40,10 +43,24 @@ Le `.rbxl` est un fichier binaire : GitHub ne peut pas montrer ses différences.
 | PNJAnimation | ServerScriptService | Animations de base des PNJ (repos, marche, course, saut, chute) |
 | BackSheathServer | ServerScriptService | Armes rangées sur le personnage : fourreau d'épée dans le dos, étuis des dagues croisés au creux des reins, dague de la main gauche |
 | EquipementServer | ServerScriptService | Armes placées dans les mains (inventaire), donner / jeter, retour des armes à la réapparition |
+| AdminMenuServer / AdminMenuClient | ServerScriptService / StarterPlayer.StarterPlayerScripts | Menu admin (F2) : peau, yeux, sourcils, coupe et couleur des cheveux, armes. Catalogue dans `ReplicatedStorage.AdminMenu.Config` |
 
 Les versions précédentes des scripts sont gardées dans `ServerStorage.Sauvegardes` (un dossier par étape).
 
 ## Journal des changements
+
+### 1.0.4 — 2026-10-25 — Coupes de cheveux
+
+- **10 coupes de cheveux** en blocs, au même grain que le visage (1 bloc = 1 pixel de la face, 1/16 stud) : courts classiques, courts ébouriffés, mi-longs en arrière, mi-longs ébouriffés, longs détachés, queue-de-cheval, chignon, tressés, rasés sur les côtés, bouclés. De 838 à 4 254 triangles par coupe.
+- **Couleur séparée de la coupe** : une seule texture-palette (256 × 128, 7 cases : 5 tons, zone rasée, attache) sert aux 10 coupes. Une nouvelle couleur = une seule image à importer. Seule « Brun » existe pour l'instant.
+- **Coupes par défaut** : joueur coupe 1 (posée sur `StarterCharacter`), Mannequin coupe 9, Combattant coupe 6.
+- **Menu admin (F2) > Apparence** : sections « Coupe » (les 10 + « Aucune », avec aperçu 3D) et « Couleur des cheveux ». Le choix est gardé dans les attributs du joueur `Look_Coupe` et `Look_CouleurCheveux` et remis à chaque réapparition ; « Tout réinitialiser » revient à la coupe 1.
+- **Coupe 9** : la zone rasée est une fine couche semi-transparente posée sur la peau. La pièce a `Transparency = 0.01`, sinon Roblox ignore la transparence de la texture et la zone s'affiche en noir.
+- Modèles : `ReplicatedStorage > Cheveux` (`Coupe1` à `Coupe10`, attributs `Decalage`, `NomCoupe`, `Ordre`), soudés à la tête (`Head > Hair`, soudure `HairWeld`).
+- Scripts modifiés : `AdminMenuServer` (pose / changement de coupe et de couleur), `AdminMenuClient` (sections Coupe et Couleur des cheveux), `AdminMenu > Config` (catalogue `CouleursCheveux`).
+- Testé en jeu : coupe 1 au spawn (visible aussi dans le buste du HUD et dans l'aperçu de l'inventaire), aperçus du menu, passage aux coupes 9 et 1 depuis le menu, coupe gardée après une mort (coupe 5), « Aucune », retour à la coupe 1 par défaut, coupes des PNJ présentes, zone rasée transparente.
+- Non testé : chaque coupe une par une sur le personnage en mouvement (seulement 1, 5 et 9 ; les autres vues uniquement en aperçu), autre couleur que Brun, vue par un deuxième joueur, manette, tactile.
+- Limites connues : les cheveux sont soudés à la tête ; les cheveux longs (5, 8) peuvent traverser le dos pendant certaines animations (non vérifié). Si `Transparency` de la coupe 9 est remis à 0, la zone rasée redevient noire.
 
 ### 1.0.3 — 2026-10-25 — Dagues jumelles et attente genou au sol
 
