@@ -9,7 +9,7 @@ Le `.rbxl` est un fichier binaire : GitHub ne peut pas montrer ses différences.
 
 ## Ouvrir le projet
 
-1. Télécharger le `.rbxl` le plus récent (actuellement `From abv 1.0.2.rbxl`).
+1. Télécharger le `.rbxl` le plus récent (actuellement `From abv 1.0.3.rbxl`).
 2. L'ouvrir dans Roblox Studio (Fichier → Ouvrir).
 3. Avant de renvoyer une version : **Ctrl+S**, puis remplacer le fichier dans le dépôt et ajouter une entrée au journal.
 
@@ -38,10 +38,25 @@ Le `.rbxl` est un fichier binaire : GitHub ne peut pas montrer ses différences.
 | CombatAnims | ReplicatedStorage.Combat | Animations de combat procédurales (poses clés) |
 | CombatServer | ServerScriptService | Validation serveur : coups, garde, parade, esquives, accroupi, intimidation |
 | PNJAnimation | ServerScriptService | Animations de base des PNJ (repos, marche, course, saut, chute) |
+| BackSheathServer | ServerScriptService | Armes rangées sur le personnage : fourreau d'épée dans le dos, étuis des dagues croisés au creux des reins, dague de la main gauche |
+| EquipementServer | ServerScriptService | Armes placées dans les mains (inventaire), donner / jeter, retour des armes à la réapparition |
 
 Les versions précédentes des scripts sont gardées dans `ServerStorage.Sauvegardes` (un dossier par étape).
 
 ## Journal des changements
+
+### 1.0.3 — 2026-10-25 — Dagues jumelles et attente genou au sol
+
+- **Dagues jumelles (nouvelle arme)** : deux « Dague d'Aldrenord » (type Dagger), une par main dans l'inventaire (Tab). Modèle 3D fait dans Blender d'après l'image de référence : lame à arête, garde courbe à têtes de lion, poignée torsadée, pommeau à croix ; étui en cuir bordeaux à chape et bouterolle en bronze. Longueur 1,75 stud.
+- **Port** : étuis croisés au creux des reins (sur les hanches, ils traversaient les bras et les cuisses). Dague droite = outil Roblox, dague gauche = copie soudée à la main gauche pendant qu'elle est sortie.
+- **X** : les deux mains vont chercher les poignées dans le dos ; les dagues passent dans les mains au moment où les mains sont sur les poignées, puis reviennent devant. Rangement : geste inverse.
+- **Clic gauche** : combo de 4 coups (taille droite, taille gauche, estoc droit, tourbillon à deux lames) ; maintien = double estoc chargé ; attaques après roulade et en l'air. **Clic droit** : garde / parade (lames dressées devant le visage). Dégâts validés par le serveur.
+- **Démarche** : lames prêtes devant, bras qui accompagnent le pas ; vitesses d'arme légère (marche 12,4, course 18, sprint 20,5 mesurés, au lieu des vitesses de l'épée).
+- **Attente genou au sol** : après 6 s accroupi sans bouger, le personnage pose le genou gauche (descente 1,1 s, relevé 0,45 s dès qu'on bouge, tourne, saute, se met en garde ou appuie sur C). Genou, pointe du pied gauche et pied droit à 0,00 stud du sol.
+- Scripts modifiés : `CombatAnims` (animations des dagues), `CombatData` (arme Dagger, gestes de dégainage par arme, vitesses par arme), `CombatClient` (dégainage / rangement selon l'arme, traînées des deux lames, démarche dagues, vitesses), `CombatServer` (gestes de dégainage acceptés selon l'arme), `BackSheathServer` (étuis et dague de la main gauche), `Locomotion` (genou au sol). Modèles : `ServerStorage > Armes` (Dague, EtuiDague, Import_FBX) ; outils dans `StarterPack`. Sources Blender / FBX : `D:\1- ROBLOX PROJECT\Armes\` chez Desno972.
+- Testé en jeu : équiper / retirer depuis l'inventaire (étuis qui suivent), dégainer / ranger, combo sur le mannequin (7, 7, 10, 9 + 9 dégâts), attaque chargée (30), garde, vitesses, accroupi dagues sorties, mort dagues sorties puis réapparition (3 objets, aucun doublon, dagues remises en main), épée toujours fonctionnelle, genou au sol (descente, relevé en marchant et avec C), console sans erreur.
+- Non testé : attaque après roulade et attaque en l'air avec les dagues, vue par un deuxième joueur, manette, tactile.
+- Limites connues : épée en main droite + dague en main gauche → la dague reste rangée (X sort seulement la main droite) ; pas d'AnimationId Roblox (animations procédurales, comme l'épée) ; en s'accroupissant ou en se relevant avec C, les pieds passent environ 0,3 stud sous le sol pendant environ 0,15 s (déjà présent avant).
 
 ### 1.0.2 — 2026-10-25 — Roulade, accroupi, bras du saut et dérapages
 
