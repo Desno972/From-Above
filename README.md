@@ -9,7 +9,7 @@ Le `.rbxl` est un fichier binaire : GitHub ne peut pas montrer ses différences.
 
 ## Ouvrir le projet
 
-1. Télécharger le `.rbxl` le plus récent (actuellement `From abv 1.0.1.rbxl`).
+1. Télécharger le `.rbxl` le plus récent (actuellement `From abv 1.0.2.rbxl`).
 2. L'ouvrir dans Roblox Studio (Fichier → Ouvrir).
 3. Avant de renvoyer une version : **Ctrl+S**, puis remplacer le fichier dans le dépôt et ajouter une entrée au journal.
 
@@ -42,6 +42,18 @@ Le `.rbxl` est un fichier binaire : GitHub ne peut pas montrer ses différences.
 Les versions précédentes des scripts sont gardées dans `ServerStorage.Sauvegardes` (un dossier par étape).
 
 ## Journal des changements
+
+### 1.0.2 — 2026-10-25 — Roulade, accroupi, bras du saut et dérapages
+
+- **Roulade** refaite (45 poses clés) : appel, enroulement compact, membres décalés, sortie avec bras d'équilibre. Le corps ne passe plus sous le sol (−0,02 stud au plus bas, contre −0,95 avant) ; les coudes bougent de 31° à 89°, le bras gauche suit le droit avec un léger retard.
+- **Accroupi** : haut du corps voûté, relâché et asymétrique (torse −20° à −23°, léger roulis ±3°, balancement des bras en marchant). Jambes inchangées.
+- **Repos accroupi** (nouveau) : regards irréguliers de la tête (toutes les 1,2 à 3,8 s), léger balancement du bassin, petits ajustements d'épaules et d'avant-bras. Les pieds ne glissent pas (0,000 stud). Les mimiques debout sont coupées en position accroupie.
+- **Bras du saut** : impulsion vers l'arrière, phase en l'air asymétrique (écart moyen entre les bras 24,6° à 33°, contre 3,8° avant), préparation à la réception juste avant le sol et amorti proportionnel à l'impact.
+- **Dérapages D↔Q** : partent du bon côté dans les deux sens ; bassin abaissé (2,13 au lieu d'environ 2,68 en course) ; bras extérieur écarté pour l'équilibre, bras intérieur replié ; jambes, puis torse, puis bras ; phase de relance de 0,2 à 0,3 s sans délai ajouté.
+- Scripts modifiés : `Locomotion` (poses SKID, SKID_REC, PRELAND, CROUCH, saut ; groupes décalés des mouvements impulsés ; repos accroupi ; inertie des bras ; réglages `SKID_RECOVER`, `CROUCH_IDLE`, `ARM_INERTIA`), `CombatAnims` (`roll_forward`), `CombatClient` (mimiques coupées en accroupi).
+- Testé en jeu : roulade, marche et repos accroupis, deux sauts (course et sprint), dérapages D→Q et Q→D, glissade, vitesses (marche 12, course 17, sprint 21, accroupi 4,5 — inchangées), console sans erreur.
+- Non testé : roulade épée en main, chute de grande hauteur, portées du saut et de la roulade (non remesurées), vue par un deuxième joueur, manette, tactile.
+- Limites connues : pendant la glissade (C), le corps passe 0,17 stud sous le sol un court instant ; à l'impact d'un saut, les pieds passent sous le sol une seule image (16 ms).
 
 ### 1.0.1 — 2026-10-25 — Réalisme du saut, de l'accroupi et de la garde
 
