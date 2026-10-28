@@ -1,6 +1,6 @@
 # D'EN HAUT (From Above)
 
-MMORPG médiéval dark fantasy sur Roblox, vue plongeante. Hub : **Aldrenord**.
+MMORPG médiéval dark fantasy sur Roblox, caméra à la troisième personne. Hub : **Aldrenord**.
 
 Version actuelle : voir le fichier `VERSION` (chaque mise à jour augmente le dernier chiffre).
 
@@ -9,7 +9,7 @@ Le `.rbxl` est un fichier binaire : GitHub ne peut pas montrer ses différences.
 
 ## Ouvrir le projet
 
-1. Télécharger le `.rbxl` le plus récent (actuellement `From abv 1.0.6.rbxl`).
+1. Télécharger le `.rbxl` le plus récent (actuellement `From abv 1.0.7.rbxl`).
 2. L'ouvrir dans Roblox Studio (Fichier → Ouvrir).
 3. Avant de renvoyer une version : **Ctrl+S**, puis remplacer le fichier dans le dépôt et ajouter une entrée au journal.
 
@@ -17,6 +17,9 @@ Le `.rbxl` est un fichier binaire : GitHub ne peut pas montrer ses différences.
 
 | Touche | Action |
 | --- | --- |
+| Souris | tourner la caméra autour du personnage, regarder en haut / en bas (un clic ne fait pas tourner la caméra) |
+| Molette | rapprocher / éloigner la caméra |
+| Alt gauche (maintenir) | afficher le curseur |
 | ZQSD | se déplacer (touches physiques : WASD en QWERTY) |
 | Shift (maintenir) | courir, puis sprint progressif |
 | C | s'accroupir / se relever (glissade si lancé) |
@@ -26,7 +29,8 @@ Le `.rbxl` est un fichier binaire : GitHub ne peut pas montrer ses différences.
 | Clic droit | garde (parade si levée juste avant l'impact) |
 | X | sortir / ranger l'arme |
 | G | intimidation |
-| Tab | inventaire (clic : mettre en main ; clic droit : donner / jeter) |
+| Tab | inventaire (clic : mettre en main ou porter une armure ; clic droit : donner / jeter) |
+| M | carte (pas encore disponible) |
 | F | ramasser un objet au sol |
 | F2 | menu admin (apparence, cheveux, armes) |
 
@@ -42,11 +46,32 @@ Le `.rbxl` est un fichier binaire : GitHub ne peut pas montrer ses différences.
 | PNJAnimation | ServerScriptService | Animations de base des PNJ (repos, marche, course, saut, chute) |
 | BackSheathServer | ServerScriptService | Armes rangées sur le personnage : fourreau d'épée dans le dos, étuis des dagues croisés au creux des reins, dague de la main gauche |
 | EquipementServer | ServerScriptService | Armes placées dans les mains (inventaire), donner / jeter, retour des armes à la réapparition |
+| ThirdPersonCamera + Camera.CameraConfig | StarterPlayer.StarterPlayerScripts / ReplicatedStorage.Camera | Caméra à la troisième personne : orbite à la souris, zoom, obstacles, cadrage de combat. Tous les réglages dans `CameraConfig` (l'ancienne `TopDownCamera` est désactivée) |
+| EnduranceService + Endurance.EnduranceConfig / EnduranceRules | ServerScriptService / ReplicatedStorage.Endurance | Endurance validée par le serveur : coûts des actions, régénération, épuisement, garde brisée |
+| EnduranceJauge | StarterPlayer.StarterPlayerScripts | Arc d'endurance à côté du personnage |
+| PoidsServer + Poids.PoidsConfig / PoidsRules | ServerScriptService / ReplicatedStorage.Poids | Poids de l'équipement porté : mobilité (vitesses, saut, roulade) et bonus de puissance |
+| HudDenHaut + HUD.HudConfig | StarterPlayer.StarterPlayerScripts / ReplicatedStorage.HUD | HUD (vie, mana, niveau, mini-carte, raccourcis, arme), visibilité dynamique et mode rouge. Remplace l'ancien HUD pixel et l'ancienne mini-carte (désactivés ; `HudClient` garde l'inventaire) |
 | AdminMenuServer / AdminMenuClient | ServerScriptService / StarterPlayer.StarterPlayerScripts | Menu admin (F2) : peau, yeux, sourcils, coupe et couleur des cheveux, armes. Catalogue dans `ReplicatedStorage.AdminMenu.Config` |
 
 Les versions précédentes des scripts sont gardées dans `ServerStorage.Sauvegardes` (un dossier par étape).
 
 ## Journal des changements
+
+### 1.0.7 — 2026-10-28 — Caméra 3e personne, endurance, poids et nouvel HUD
+
+- **Caméra à la troisième personne** (inspirée de Where Winds Meet, sans en reprendre aucun élément) : derrière et au-dessus du personnage, angle plongeant de 14°, distance 11 (5 à 16 à la molette), personnage à 41 % de la largeur de l'écran. Rotation à la souris (curseur bloqué au centre ; Alt, Tab ou F2 le libèrent), angle vertical de -65° à +30°, lissage réglable. Obstacles : la caméra se rapproche vite et repart doucement ; dos au mur, elle passe au-dessus de l'épaule. En combat, le personnage se décale un peu plus et la caméra plonge de 10° de plus pour voir l'adversaire. Les attaques et la garde visent dans la direction de la caméra.
+- **Endurance** (100 points, validée par le serveur) : coups 7 à 20 selon l'arme et le coup, coups chargés 11 à 32, roulade 20, pas en arrière 14, pas de côté 11, sprint 10 par seconde ; marche et course gratuites. Régénération de 32 par seconde après 0,9 s (3 fois plus lente en garde). À 0 : épuisé, plus de sprint jusqu'à 30. Coup bloqué : coûte ses dégâts (6 au minimum) ; sans assez d'endurance, la garde se brise (50 % des dégâts, étourdi 0,9 s). Une action est acceptée s'il reste au moins la moitié de son coût. Jauge : petit arc doré à gauche du personnage.
+- **Poids de l'équipement** : poids total = 70 kg + objets équipés (dague 0,8, épée 3,5 ; le sac ne compte pas). Mobilité = 1 - 1,5 % par kg (70 % au minimum) appliquée à la course et au sprint, et en partie à la marche, au saut, à la roulade, à l'accroupi et au démarrage. Bonus de dégâts +0,7 % par kg (+15 % au plus), calculé par le serveur. Les cases d'armure de l'inventaire fonctionnent (4 armures d'essai dans `ServerStorage.ArmuresEssai`, non distribuées). L'inventaire affiche le poids des objets, la charge, la mobilité et la puissance. L'endurance utilise ce poids.
+- **Nouvel HUD** d'après les maquettes, dans le style de la jauge d'endurance (traits en segments fins, palette terreuse de l'inventaire uniquement) : vie et mana en bas, niveau avec anneau d'expérience, mini-carte ronde au bord irrégulier, raccourcis A / E / R et arme en bas à droite. Presque invisible à l'arrêt (10 %), visible quand on bouge ou agit, pleinement visible en combat (dégâts reçus ou infligés, ennemi qui attaque à moins de 12 studs) pendant 6 s après la dernière action hostile. Rouge seulement à 25 % de vie ou moins. Tous les réglages dans `HudConfig`.
+- Scripts créés : `ThirdPersonCamera`, `Camera.CameraConfig`, `Camera.CameraState`, `EnduranceService`, `Endurance.EnduranceConfig`, `Endurance.EnduranceRules`, `EnduranceJauge`, `PoidsServer`, `Poids.PoidsConfig`, `Poids.PoidsRules`, `HudDenHaut`, `HUD.HudConfig`. Scripts modifiés : `CombatClient`, `CombatServer`, `CombatData`, `EquipementServer`, `HUD.Inventaire`, `HudClient` (ancien HUD caché). Désactivés : `TopDownCamera`, `StarterGui.MiniCarte`.
+- Testé en jeu :
+  - caméra : immobile, marche / course / saut / roulade dans plusieurs directions, rotation complète, regard haut et bas, mur, couloir étroit, pente, combat, réapparition, Tab / Alt / F2 ;
+  - endurance : coûts des attaques et des roulades mesurés, sprint 10 par seconde sur 10 s, épuisement et reprise, garde brisée (seuil abaissé pour le test), changement d'arme sans remise à zéro, mort et réapparition, 40 roulades envoyées en 2 s par un client modifié dont 4 acceptées ;
+  - poids : vitesses mesurées (sprint 19,5 sans équipement, 13,6 avec épée + cuirasse), saut 3,95 / 2,94 studs, roulade 7,93 / 6,70 studs, dégâts d'un jab 6,000 / 6,756 avec la cuirasse, remplacement d'armure sans double comptage, retour exact à la base ;
+  - HUD : fondu à l'arrêt et en mouvement, combat en infligeant et en recevant des coups, barre de vie fidèle aux vrais PV, vie basse, mode rouge à 22 et 18 PV (pas à 26 ni en combat à 92 PV) ;
+  - console sans erreur.
+- Non testé : sensation de la souris à la main (rotation testée par un signal interne), manette et tactile, multijoueur et PvP, autres résolutions d'écran (seulement calculées), accélération au démarrage selon le poids (calculée), fondus de l'HUD après sa dernière refonte visuelle.
+- Limites connues : l'image de référence de la caméra n'avait pas été fournie ; au corps à corps, notre personnage cache encore une partie du torse de l'adversaire ; un client modifié qui sprinte épuisé est seulement signalé dans la console ; les armures d'essai n'ont ni modèle ni défense et disparaissent à la mort ; mobilité et puissance atteignent leur plafond vers 20 kg ; le niveau, l'XP et le mana n'existent pas encore dans le jeu (l'HUD affiche 1, 0/100 et 80/80) ; la mini-carte est orientée nord en haut.
 
 ### 1.0.6 — 2026-10-25 — Sauts, roulade et sprint progressif
 
