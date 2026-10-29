@@ -9,7 +9,7 @@ Le `.rbxl` est un fichier binaire : GitHub ne peut pas montrer ses différences.
 
 ## Ouvrir le projet
 
-1. Télécharger le `.rbxl` le plus récent (actuellement `From abv 1.0.7.rbxl`).
+1. Télécharger le `.rbxl` le plus récent (actuellement `From abv 1.0.8.rbxl`).
 2. L'ouvrir dans Roblox Studio (Fichier → Ouvrir).
 3. Avant de renvoyer une version : **Ctrl+S**, puis remplacer le fichier dans le dépôt et ajouter une entrée au journal.
 
@@ -51,11 +51,21 @@ Le `.rbxl` est un fichier binaire : GitHub ne peut pas montrer ses différences.
 | EnduranceJauge | StarterPlayer.StarterPlayerScripts | Arc d'endurance à côté du personnage |
 | PoidsServer + Poids.PoidsConfig / PoidsRules | ServerScriptService / ReplicatedStorage.Poids | Poids de l'équipement porté : mobilité (vitesses, saut, roulade) et bonus de puissance |
 | HudDenHaut + HUD.HudConfig | StarterPlayer.StarterPlayerScripts / ReplicatedStorage.HUD | HUD (vie, mana, niveau, mini-carte, raccourcis, arme), visibilité dynamique et mode rouge. Remplace l'ancien HUD pixel et l'ancienne mini-carte (désactivés ; `HudClient` garde l'inventaire) |
-| AdminMenuServer / AdminMenuClient | ServerScriptService / StarterPlayer.StarterPlayerScripts | Menu admin (F2) : peau, yeux, sourcils, coupe et couleur des cheveux, armes. Catalogue dans `ReplicatedStorage.AdminMenu.Config` |
+| AdminMenuServer / AdminMenuClient | ServerScriptService / StarterPlayer.StarterPlayerScripts | Menu admin (F2) : peau, yeux, sourcils, coupe et couleur des cheveux, moustaches, barbes et couleur de la pilosité, armes. Catalogue dans `ReplicatedStorage.AdminMenu.Config` |
+| Pilosite | ReplicatedStorage | Moustaches et barbes construites en blocs (sans mesh importé), avec leurs couleurs. Attributs joueur : `Look_Moustache`, `Look_Barbe`, `Look_PilositeCouleur` |
 
 Les versions précédentes des scripts sont gardées dans `ServerStorage.Sauvegardes` (un dossier par étape).
 
 ## Journal des changements
+
+### 1.0.8 — 2026-10-29 — Moustaches, barbes et têtes carrées
+
+- **Pilosité faciale** : nouveau module `Pilosite` (moustaches et barbes construites en blocs, sans mesh importé) avec une liste de couleurs. Le choix est gardé en attributs du joueur (`Look_Moustache`, `Look_Barbe`, `Look_PilositeCouleur`) et posé sur le personnage à l'apparition (`poserPilosite`).
+- **Menu admin (F2)** : nouvel onglet « Pilosité » (barbes, moustaches, couleur de la pilosité), avec aperçu. Les attributs `Look_*` de pilosité sont remis à zéro avec le reste de l'apparence.
+- **Têtes carrées** : le fichier contient une note de sauvegarde « avant import pilosité + têtes carrées » (anciennes têtes : taille 0,75 / 1 / 0,875) ; les anciennes valeurs sont conservées dans la place.
+- Scripts créés : `Pilosite`. Scripts modifiés : le menu admin (partie serveur et partie client). Liste établie en comparant le contenu avec la 1.0.7, pas en relisant chaque script.
+- Vérifié : le `.rbxl` décompressé contient bien le module `Pilosite`, l'onglet « Pilosité » et les trois attributs `Look_*`, absents de la 1.0.7.
+- Non testé en jeu par Claude : l'affichage des barbes et moustaches, les couleurs, l'onglet du menu F2, les têtes carrées, la compatibilité avec les coupes de cheveux. Les mesures du journal de la 1.0.7 ne sont pas refaites.
 
 ### 1.0.7 — 2026-10-28 — Caméra 3e personne, endurance, poids et nouvel HUD
 
