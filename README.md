@@ -9,7 +9,7 @@ Le `.rbxl` est un fichier binaire : GitHub ne peut pas montrer ses différences.
 
 ## Ouvrir le projet
 
-1. Télécharger le `.rbxl` le plus récent (actuellement `From abv 1.0.8.rbxl`).
+1. Télécharger le `.rbxl` le plus récent (actuellement `From abv 1.0.9.rbxl`).
 2. L'ouvrir dans Roblox Studio (Fichier → Ouvrir).
 3. Avant de renvoyer une version : **Ctrl+S**, puis remplacer le fichier dans le dépôt et ajouter une entrée au journal.
 
@@ -57,6 +57,25 @@ Le `.rbxl` est un fichier binaire : GitHub ne peut pas montrer ses différences.
 Les versions précédentes des scripts sont gardées dans `ServerStorage.Sauvegardes` (un dossier par étape).
 
 ## Journal des changements
+
+### 1.0.9 — 2026-10-30 — Marteau en capture, roulades lourd / léger et déplacements capturés
+
+- **Marteau** (nouvelle arme, 7 kg) : endurance (coup 18, finisher 26, chargé 24 à 40), porté dans le dos et en main ; trot quand on est épuisé (Shift ne fait plus courir, allure `TROT_K` 0,42).
+- **Coups du marteau en captures Mixamo** (Great Sword Slash découpé en 3 coups, 1 clic = 1 coup ; Heavy Weapon Swing ; Great Sword Jump Attack), adaptées au squelette R15 (module `MocapMarteau`) : poids de la masse (ressort, affaissement, contact au sol, étincelles), arrêt sur image et secousse de caméra aux impacts, gros impact au sol pour le coup sauté et le coup unique, frappes au sol devant le perso (bras par cinématique inverse), 2e coup plus lent qui racle le sol (étincelles, son de métal), pause essoufflée puis relevé lourd après les coups au sol, délai avant de refrapper, coups impossibles à interrompre (super-armure, dégâts quand même pris). Port en diagonale à deux mains à l'arrêt, garde (clic droit) cohérente avec le port, marteau posé et traîné au sol en maintenant Shift (posé / ramassé sans que l'arme « vole »), bras qui ne traversent plus le corps pendant la charge.
+- **Textures** : nouvelles peaux (blanc, foncée, olive), yeux (6 couleurs) et sourcils (5 couleurs) dans `ReplicatedStorage.Apparence` ; appliquées au perso de départ, à l'aperçu, au Mannequin et au Combattant.
+- **Roulades** (Universal Animation Library 1 de Quaternius, CC0, module `MocapRoulade`) : poids de référence 75 kg (corps 70 + équipement). Lourd : ROLL (roulade sur place, déplacement donné par le jeu, environ 7,5 studs avec le marteau). Léger : ROLL RM (vrai déplacement de la capture, ramené à 12 studs), une seule fois : une roulade enchaînée pendant la précédente ou moins de 0,45 s après est une ROLL normale.
+- **Déplacements en captures Mixamo** (module `MocapLoco`) : marche, départ, arrêt, marche arrière en garde (jambes), demi-tour en marchant, saut sur place et en mouvement, montée de marches. La cadence suit la distance réellement parcourue ; les sauts suivent la vitesse verticale réelle. À la conversion : bras écartés s'ils entrent dans le torse ou la tête, hanches écartées si les jambes se croisent, bassin recalé pour que le pied le plus bas touche le sol. En jeu, les pieds sont soulevés s'ils entreraient dans le sol ou une marche. La course et le sprint gardent l'animation de course.
+- **Vitesses** : marche 6 studs/s (avant 12) pour coller à la capture de marche ; épée 5,5 (avant 8), marteau 5 (avant 9) ; course et sprint inchangés. Garde et charge gardent à peu près leur allure grâce à `GUARD_MOVE_K` 0,9 et `CHARGE_MOVE_K` 0,8. Préparation du saut sur place 0,3 s (avant 0,24). Le demi-tour capturé ne se lance que si l'on avançait face à son regard (pas en relâchant la garde en reculant).
+- Scripts créés : `MocapMarteau`, `MocapRoulade`, `MocapLoco`. Scripts modifiés : `CombatClient`, `CombatServer`, `CombatAnims`, `CombatData`, `Locomotion`, `PoidsConfig`, `EnduranceConfig`, `EnduranceRules`, `BackSheathServer`, `HUD.Inventaire`, `HudDenHaut`. Sauvegardes dans `ServerStorage.Sauvegardes` (de `avant_marteau` à `avant_captures_deplacement`).
+- Testé en jeu :
+  - marteau : coups, impacts, positions et vitesses des articulations, contact au sol, traîné au sol, garde ;
+  - roulades : sans arme (70 kg) ROLL RM ~13 studs, puis ROLL ~7,8 studs si enchaînée, puis ROLL RM après une pause ; avec le marteau (77 kg) ROLL ~7,5 studs à chaque fois ;
+  - marche sur sol plat : aucun pied sous le sol, pied d'appui qui glisse ~0,6 stud/s à 6 studs/s ;
+  - escaliers de 0,8 stud : 14 images sur 391 avec un pied à plus de 0,1 stud dans une marche (0,18 au pire) ;
+  - demi-tour 0 à 180° en 1,2 s ; sauts sur place et en marchant (jambes repliées, réception amortie) ; marche arrière en garde à l'épée (pieds au sol) ; course et marche avec le marteau ; garde relâchée en reculant sans demi-tour ;
+  - console sans erreur.
+- Non testé : coup sauté du marteau en jeu, rendu à l'œil de la plupart des gestes, ce que voient les autres joueurs, manette et tactile.
+- Limites connues : le départ de marche est joué environ 2,5 fois plus vite que la capture ; les bras de la capture de marche sont presque tendus ; à l'arrêt en garde à l'épée, les pieds entrent de 0,25 à 0,3 stud dans le sol (déjà le cas avant cette version).
 
 ### 1.0.8 — 2026-10-29 — Moustaches, barbes et têtes carrées
 
