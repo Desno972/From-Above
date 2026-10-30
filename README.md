@@ -9,7 +9,7 @@ Le `.rbxl` est un fichier binaire : GitHub ne peut pas montrer ses différences.
 
 ## Ouvrir le projet
 
-1. Télécharger le `.rbxl` le plus récent (actuellement `From abv 1.0.9.rbxl`).
+1. Télécharger le `.rbxl` le plus récent (actuellement `From abv 1.0.10.rbxl`).
 2. L'ouvrir dans Roblox Studio (Fichier → Ouvrir).
 3. Avant de renvoyer une version : **Ctrl+S**, puis remplacer le fichier dans le dépôt et ajouter une entrée au journal.
 
@@ -57,6 +57,15 @@ Le `.rbxl` est un fichier binaire : GitHub ne peut pas montrer ses différences.
 Les versions précédentes des scripts sont gardées dans `ServerStorage.Sauvegardes` (un dossier par étape).
 
 ## Journal des changements
+
+### 1.0.10 — 2026-10-30 — Mains nues en captures et nettoyage de la place
+
+- **Mains nues en captures Mixamo** (Standing Idle → Fight Idle, Fight Idle → Standing Idle, Body Block), adaptées au squelette R15 (module `MocapMainsNues`, haut du corps seulement) : la garde se lève et se rabaisse au rythme de l'acteur, les jambes descendent dans la garde du jeu en suivant la flexion des jambes de la capture, et le blocage (clic droit) joue la capture du Body Block. Les bras sont écartés s'ils entrent dans le torse ou la tête. Réglages dans `CombatData` : `FIST_GUARD_MOCAP`, `FIST_GUARD_IN_SPEED` 1,5, `FIST_GUARD_OUT_SPEED` 1,3, `FIST_BLOCK_ANIM`, `FIST_BLOCK_SPEED` 1,25. Animations ajoutées dans `CombatAnims` : `fist_guard_in`, `fist_guard_out`, `fist_block`.
+- **Menu admin (F2)** : anciennes peaux et anciens sourcils (dont « Court ») retirés de la liste ; nouvelles peaux (Blanche, Olive, Foncée) et nouveaux sourcils (Blanc, Blond, Gris, Noir, Roux) listés.
+- **Nettoyage de la place** : suppression des scripts désactivés `MedievalCharacter` et `TopDownCamera`, de la `MiniCarte` désactivée, des outils de test `ServerStorage.ArmuresEssai`, de l'aperçu `Workspace.PersoBloc_Apercu`, du ciel et de l'atmosphère par défaut en double dans Lighting. Dans `ServerStorage.Sauvegardes`, 40 des 43 dossiers supprimés (il reste `avant_captures_deplacement`, `avant_f2_textures`, `avant_anims_mains_nues`) : les anciennes versions restent dans l'historique Git (les sauvegardes `avant_marteau` à `avant_garde_marteau` citées dans 1.0.9 n'existent plus dans la place). `HideDefaultHealth` et `LosangeKit` sont conservés.
+- Scripts créés : `MocapMainsNues`. Scripts modifiés : `CombatClient`, `CombatAnims`, `CombatData`, `AdminMenu.Config`.
+- Testé en jeu : lancement d'une partie après le nettoyage, console sans erreur ; pendant l'intégration des mains nues, aucune erreur en console et saut de poing d'au plus 0,25 stud par image. Le contenu du `.rbxl` publié a été vérifié (nouveau code présent, scripts supprimés absents).
+- Non testé : vrai combat à mains nues contre un PNJ, garde levée en marchant, rendu à l'œil des 3 animations en jeu, ce que voient les autres joueurs, manette et tactile.
 
 ### 1.0.9 — 2026-10-30 — Marteau en capture, roulades lourd / léger et déplacements capturés
 
