@@ -9,7 +9,7 @@ Le `.rbxl` est un fichier binaire : GitHub ne peut pas montrer ses différences.
 
 ## Ouvrir le projet
 
-1. Télécharger le `.rbxl` le plus récent (actuellement `From abv 1.0.10.rbxl`).
+1. Télécharger le `.rbxl` le plus récent (actuellement `From abv 1.0.11.rbxl`).
 2. L'ouvrir dans Roblox Studio (Fichier → Ouvrir).
 3. Avant de renvoyer une version : **Ctrl+S**, puis remplacer le fichier dans le dépôt et ajouter une entrée au journal.
 
@@ -30,7 +30,10 @@ Le `.rbxl` est un fichier binaire : GitHub ne peut pas montrer ses différences.
 | X | sortir / ranger l'arme |
 | G | intimidation |
 | Tab | inventaire (clic : mettre en main ou porter une armure ; clic droit : donner / jeter) |
-| M | carte (pas encore disponible) |
+| `,` | lire la carte : le personnage sort le parchemin de sa ceinture et la carte plein écran s'ouvre ; la même touche la ferme. Bouger ou sauter la ferme aussi. Dans la carte : clic gauche ou molette (clic) maintenu = déplacer, molette = zoom, clic droit = poser un ping, clic sur un ping = ses options. La touche est lue selon la disposition du clavier (AZERTY : la virgule) |
+| Flèche haut / bas | objet « quick use » suivant / précédent (les flèches ne font plus avancer ni reculer) |
+| V | utiliser l'objet « quick use » sélectionné |
+| A, E, R | sorts 1, 2 et 3 (les losanges s'éclairent ; aucun sort derrière pour l'instant) |
 | F | ramasser un objet au sol |
 | F2 | menu admin (apparence, cheveux, armes) |
 
@@ -50,13 +53,31 @@ Le `.rbxl` est un fichier binaire : GitHub ne peut pas montrer ses différences.
 | EnduranceService + Endurance.EnduranceConfig / EnduranceRules | ServerScriptService / ReplicatedStorage.Endurance | Endurance validée par le serveur : coûts des actions, régénération, épuisement, garde brisée |
 | EnduranceJauge | StarterPlayer.StarterPlayerScripts | Arc d'endurance à côté du personnage |
 | PoidsServer + Poids.PoidsConfig / PoidsRules | ServerScriptService / ReplicatedStorage.Poids | Poids de l'équipement porté : mobilité (vitesses, saut, roulade) et bonus de puissance |
-| HudDenHaut + HUD.HudConfig | StarterPlayer.StarterPlayerScripts / ReplicatedStorage.HUD | HUD (vie, mana, niveau, mini-carte, raccourcis, arme), visibilité dynamique et mode rouge. Remplace l'ancien HUD pixel et l'ancienne mini-carte (désactivés ; `HudClient` garde l'inventaire) |
+| HudLosanges + HUD.QuickUse | StarterPlayer.StarterPlayerScripts / ReplicatedStorage.HUD | HUD à 4 losanges en pixel art (bas gauche) : 3 sorts A / E / R et le grand losange « quick use ». `QuickUse` tient la liste des objets (3 objets de test ; `QuickUse.setItems({...})` pour la remplir, l'événement `QuickUse.used` signale chaque utilisation). Remplace l'ancien HUD `HudDenHaut` (supprimé ; `HudClient` ne garde que l'inventaire) |
+| MiniMap + MiniMapPings | StarterPlayer.StarterPlayerScripts | Mini-carte ronde en haut à droite : relevé du terrain en pixels fins, contour gris avec N / E / S / W, flèche rouge du joueur, aucune icône de mob. `MiniMapPings` y affiche les pings. Réglages dans `CFG` en tête de `MiniMap` |
+| WorldMap + HUD.PingStore | StarterPlayer.StarterPlayerScripts / ReplicatedStorage.HUD | Carte plein écran (touche `,`) : tuiles dont le niveau de détail suit le zoom, déplacement, zoom, pings (8 couleurs, 8 icônes, verrouillage permanent ; un ping non verrouillé disparaît à l'arrivée ou après 3 min). `PingStore` partage la liste des pings et leurs textures avec la mini-carte |
+| Combat.MapRead + Combat.ToggleArme | ReplicatedStorage.Combat | Animation « lire la carte » et parchemin à la ceinture : geste fonction d'une progression `u` (le geste inverse est le même geste à l'envers), mains posées par `ArmIK`, couche additive appelée par `CombatClient`. `ToggleArme` permet à la carte de ranger puis de ressortir l'arme. Réglages dans `MapRead.CFG` |
+| UI.Police | ReplicatedStorage.UI | Police unique du jeu (Caesar Dressing, identifiant `rbxassetid://12187368843`). Tout texte d'interface doit utiliser `Police.FONT` ; pour changer de police partout, modifier cet identifiant |
 | AdminMenuServer / AdminMenuClient | ServerScriptService / StarterPlayer.StarterPlayerScripts | Menu admin (F2) : peau, yeux, sourcils, coupe et couleur des cheveux, moustaches, barbes et couleur de la pilosité, armes. Catalogue dans `ReplicatedStorage.AdminMenu.Config` |
 | Pilosite | ReplicatedStorage | Moustaches et barbes construites en blocs (sans mesh importé), avec leurs couleurs. Attributs joueur : `Look_Moustache`, `Look_Barbe`, `Look_PilositeCouleur` |
 
 Les versions précédentes des scripts sont gardées dans `ServerStorage.Sauvegardes` (un dossier par étape).
 
 ## Journal des changements
+
+### 1.0.11 — 2026-10-30 — Nouveau HUD à losanges, mini-carte, carte plein écran et lecture de carte
+
+- **Ancien HUD supprimé** : `HudDenHaut` et `HUD.HudConfig` (vie, mana, niveau, mini-carte, raccourcis, arme) et tout le dessin de l'ancien `HudClient`, qui ne garde plus que l'inventaire et le masquage de la barre de vie Roblox. Seuls la jauge d'endurance (`EnduranceJauge`) et l'inventaire sont conservés. Anciens scripts gardés dans `ServerStorage.Sauvegardes.avant_refonte_hud`.
+- **HUD à 4 losanges** (`HudLosanges`, en bas à gauche), en pixel art comme la mini-carte : une seule image de 127 × 93 px agrandie par un entier (hauteur visée = 15 % de l'écran). Géométrie reprise de la maquette : grand losange de rayon 39, petits de rayon 22, 3 px d'écart, les 3 petits en triangle à droite du grand. Les 3 petits sont les sorts A (haut), E (milieu), R (bas) : la lettre s'éclaire quand la touche est enfoncée, aucun sort n'est branché. Le grand losange montre l'objet « quick use » sélectionné (icône, 3 points de position, rappel de la touche V, sans nom ni quantité).
+- **Quick use** (`HUD.QuickUse`) : 3 objets de test (potion de vie × 3, potion de mana × 5, élixir d'endurance × 2). Flèche haut = suivant, flèche bas = précédent (liste circulaire), V = utiliser (la quantité baisse). Il n'y a aucun effet de soin ni de mana : l'événement `QuickUse.used` est prévu pour les brancher. Les flèches sont absorbées (elles ne font plus avancer ni reculer).
+- **Mini-carte** (`MiniMap`, haut droite) : ronde, nord fixe, contour gris biseauté avec N / E / S / W en texte, relevé du terrain en pixels de 2 studs avec ombrage de relief et grain, flèche rouge qui tourne avec le personnage, aucune tête de mob. Taille : 27 % de la hauteur de l'écran. `MiniMapPings` y affiche les pings (hors portée : collés au bord, à moitié transparents).
+- **Carte plein écran** (`WorldMap`, touche `,` lue selon la disposition du clavier) : clic gauche ou clic molette maintenu = déplacer (la carte suit le curseur), molette = zoom autour du curseur (0,06 à 6 px par stud), bouton RECENTRER, coordonnées en bas à gauche. Le niveau de détail suit le zoom : un pixel de carte fait toujours 3 à 6 px à l'écran, moyenné sur 4 relevés aux niveaux larges. Clic droit = ping (8 couleurs, 8 icônes, case « verrouillé · permanent », suppression). Un ping non verrouillé disparaît quand on arrive à 6 studs (message « DESTINATION ATTEINTE ») ou après 3 minutes. Marqueurs de 22 px pour un écran de 1080 px de haut. Réglages dans `CFG`.
+- **Lecture de carte animée** (`Combat.MapRead`) : la main droite prend le parchemin à la ceinture (dans le dos, à droite), le ramène devant le torse, la main gauche le rejoint, il se déroule et la tête se penche ; la carte plein écran s'ouvre à 78 % du geste (1,5 s en tout). À la fermeture, le même geste est rejoué à l'envers (1,1 s). Les mains sont posées par `ArmIK`. Bouger, sauter ou mourir annule. Si une arme est en main, elle est rangée avant (`Combat.ToggleArme`) puis ressortie après.
+- **Police unique Caesar Dressing** (`UI.Police`, identifiant `12187368843`) : tout le texte d'interface l'utilise (HUD, mini-carte, carte, menu des pings, inventaire, menu admin F2, chiffres de dégâts) ; les lettres dessinées en pixels (A / E / R, V, N / E / S / W) sont maintenant du vrai texte. Tailles agrandies pour cette police : × 1,5 dans le menu admin, 6 → 9, 7 → 10 et 10 → 15 pour les petits textes de l'inventaire.
+- **Liste des joueurs Roblox masquée** : elle s'ouvrait aussi avec Tab, en même temps que l'inventaire.
+- Scripts créés : `HudLosanges`, `MiniMap`, `MiniMapPings`, `WorldMap`, `HUD.QuickUse`, `HUD.PingStore`, `UI.Police`, `Combat.MapRead`, `Combat.ToggleArme`. Scripts modifiés : `HudClient`, `CombatClient` (couche de lecture de carte, rangement de l'arme, police des dégâts), `Camera.CameraConfig` (la carte libère le curseur), `AdminMenuClient`, `HUD.Inventaire`, `UI.LosangeKit`. Supprimés : `HudDenHaut`, `HUD.HudConfig`. Sauvegardes ajoutées : `avant_refonte_hud`, `avant_anim_carte`.
+- Testé en jeu : console sans erreur à chaque lancement. Carte plein écran : ouverture et fermeture, déplacement au clic gauche (décalage exact de 200 × 100 px pour 200 × 100 px de souris), zoom avant et arrière (tuiles du niveau de détail courant présentes), ping posé sous le curseur, couleur / icône / verrou du menu, marqueur sur la mini-carte, disparition d'un ping à l'arrivée avec son message, fermeture de la carte quand on marche. Animation de lecture : poses de la saisie dans le dos, du passage sur le côté, du portage et de la lecture, vues en captures. HUD : disposition, flèche haut (vie → mana), touche V (quantité × 3 → × 2), personnage immobile pendant les flèches. Police : 263 textes d'interface en Caesar Dressing, aucun autre ; inventaire (Tab) et menu admin (F2) vus en captures ; Tab n'ouvre plus que l'inventaire. Le contenu du `.rbxl` publié a été vérifié (nouveau code et police présents, absents de la 1.0.10).
+- Non testé : déplacement au clic molette (l'outil de test ne le simule pas), rangement et ressortie automatiques de l'arme en main, geste inverse vu à l'œil (seule la fin du geste a été contrôlée), rendu à l'œil de la carte plein écran et de ses tuiles aux zooms extrêmes (tests dans une petite fenêtre Studio, agrandissement × 1), taille réelle du HUD et de la mini-carte sur un écran 1080p, ce que voient les autres joueurs (le geste et le parchemin ne sont pas répliqués), sauvegarde des pings d'une partie à l'autre (non faite), manette et tactile.
 
 ### 1.0.10 — 2026-10-30 — Mains nues en captures et nettoyage de la place
 
