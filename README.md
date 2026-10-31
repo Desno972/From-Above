@@ -9,7 +9,7 @@ Le `.rbxl` est un fichier binaire : GitHub ne peut pas montrer ses différences.
 
 ## Ouvrir le projet
 
-1. Télécharger le `.rbxl` le plus récent (actuellement `From abv 1.0.11.rbxl`).
+1. Télécharger le `.rbxl` le plus récent (actuellement `From abv 1.0.12.rbxl`).
 2. L'ouvrir dans Roblox Studio (Fichier → Ouvrir).
 3. Avant de renvoyer une version : **Ctrl+S**, puis remplacer le fichier dans le dépôt et ajouter une entrée au journal.
 
@@ -64,6 +64,18 @@ Le `.rbxl` est un fichier binaire : GitHub ne peut pas montrer ses différences.
 Les versions précédentes des scripts sont gardées dans `ServerStorage.Sauvegardes` (un dossier par étape).
 
 ## Journal des changements
+
+### 1.0.12 — 2026-10-31 — Musée d'assets : aile Architecture et maisons paysannes
+
+- **Catalogue d'assets de map** (jeu *The Last Dawn*) : priorités 🔴 indispensable pour Aldrenord / 🟠 zones extérieures / 🟡 plus tard. On commence par la catégorie 1, l'architecture modulaire (remparts, grande porte et herse, tours de guet, escaliers, murs, toits).
+- **Règles de base validées** : 1 voxel = 0,25 stud, 1 bloc = 4 studs ; mur 64 × 64 × 8 voxels, porte 24 × 40, fenêtre 20 × 24, marche 16 × 4 × 8 ; pentes de toit à 22,5° et 45° ; palette plate : pierre gris froid (3 tons), bois brun sombre (3), chaume ocre grisé (3), ardoise gris-bleu (2), colombage (poutres brun noir, remplissage crème sale), accents fer mat et rivets cuivre. Si une pièce déplaît en jeu, on identifie la règle en cause et on la modifie dans le wiki dev.
+- **Musée d'assets dans la place** (`Musee_Assets`, aile `Architecture`, sols `Sol_Musee`, plaques de nom) : murs (pierre pleine, soubassement, angle ; bois plein, angle ; colombage plein, fenêtre, porte ; demi-mur d'étage ; pignon triangulaire), toits en chaume, bardeaux et ardoise (pente droite, angle extérieur, angle intérieur, faîtage), portes (simple, double), fenêtres à volets ouverts / fermés, cheminée (conduit, foyer), escaliers (bois, pierre, rempart), balcon, pont de bois, fondation de pierre, piliers (bois, pierre), poutre, sols (pavés, terre battue, planches, dalles).
+- **Maisons paysannes** (pack de 4, `Maisons.Paysannes`) : petite chaumière, chaumière allongée, appentis, maison en L.
+- **Direction retenue** : chaque bâtiment aura plusieurs états dérivés d'un même modèle (vivant / siège, usé, abandonné, ruine, brûlé) ; « maisons abandonnées / hantées » devient un état de pack ; les assets défensifs (palissades, barricades, fortins, pièges) montent en priorité pour le hub.
+- Aucun changement de gameplay : le reste de la place est celui de la 1.0.11.
+- Testé : le contenu du `.rbxl` publié a été vérifié (noms des pièces ci-dessus présents, code de la 1.0.11 toujours présent).
+- Non testé : rendu à l'œil des pièces en jeu, dimensions réelles de chaque pièce par rapport aux règles de base, assemblage des pièces entre elles, alignement sur la grille.
+- À décider : ton d'Aldrenord (encore prospère malgré la menace, ou déjà marqué par le siège). Prochaine étape : remparts, grande porte, tours de guet.
 
 ### 1.0.11 — 2026-10-30 — Nouveau HUD à losanges, mini-carte, carte plein écran et lecture de carte
 
